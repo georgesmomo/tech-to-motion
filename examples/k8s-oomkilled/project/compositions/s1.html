@@ -1,0 +1,24 @@
+<template>
+  <div id="root" data-composition-id="s1" data-width="1920" data-height="1080">
+    <div class="ttm-scene">
+      <div class="ttm-grid" id="s1-grid"></div>
+      <div class="ttm-stage" id="s1-stage">
+        <div class="ttm-kicker ttm-center" id="s1-kick" style="top: 330px">Kubernetes · 25 seconds</div>
+        <h1 class="ttm-hook ttm-center" id="s1-hook" style="top: 410px; font-size: 116px">Your request takes <span class="ttm-accent">4 hops</span>.</h1>
+        <div class="ttm-title ttm-center ttm-muted" id="s1-sub" style="top: 590px; font-size: 64px">One of them can kill it.</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const D = 3;
+      const tl = gsap.timeline({ paused: true });
+      TTM.drift(tl, "#s1-grid", 0, D);
+      TTM.reveal(tl, "#s1-hook", 0, { kind: "settle" });
+      TTM.reveal(tl, "#s1-kick", 0.1, { kind: "rise" });
+      TTM.reveal(tl, "#s1-sub", 1.1, { kind: "rise" });
+      TTM.exit(tl, "#s1-stage", D, "whip");
+      window.__timelines["s1"] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,6 @@
+.DS_Store
+node_modules/
+**/.ttm-stills/
+**/.ttm-check.json
+**/.hyperframes/
+**/renders/.raw.mp4

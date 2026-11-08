@@ -1,0 +1,39 @@
+{
+  "title": "k8s-request-path",
+  "ratio": "16:9",
+  "look": "blueprint",
+  "fps": 30,
+  "scenes": [
+    {
+      "id": "s1",
+      "duration": 3,
+      "enter": "cut",
+      "beat": "hook"
+    },
+    {
+      "id": "s2",
+      "duration": 8,
+      "enter": "whip",
+      "beat": "map + happy path"
+    },
+    {
+      "id": "s3",
+      "duration": 7,
+      "enter": "zoom",
+      "beat": "failure inside the pod"
+    },
+    {
+      "id": "s4",
+      "duration": 6,
+      "enter": "whip",
+      "beat": "fix"
+    },
+    {
+      "id": "s5",
+      "duration": 3.5,
+      "enter": "zoom",
+      "beat": "payoff + end card"
+    }
+  ],
+  "music": null
+}

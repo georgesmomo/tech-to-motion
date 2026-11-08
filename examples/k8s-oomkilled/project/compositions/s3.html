@@ -1,0 +1,43 @@
+<template>
+  <div id="root" data-composition-id="s3" data-width="1920" data-height="1080">
+    <div class="ttm-scene">
+      <div class="ttm-grid" id="s3-grid"></div>
+      <div class="ttm-stage" id="s3-stage">
+        <div class="ttm-kicker" id="s3-kick" style="position:absolute; left:140px; top:130px">14:02 · deploy v2.4.1</div>
+        <h2 class="ttm-title" id="s3-title" style="position:absolute; left:140px; top:180px">Then the pod <span class="ttm-err">dies</span>.</h2>
+        <div class="ttm-term" id="s3-term" style="left:140px; top:340px; width:1640px; height:560px">
+          <div class="ttm-term-bar"><i></i><i></i><i></i><span>prod-eu · zsh</span></div>
+          <div class="ttm-term-body">
+            <div class="ttm-line"><span class="ttm-prompt">$ </span><span id="s3-cmd"></span></div>
+            <div class="ttm-line ttm-out ttm-muted">NAME                 READY   STATUS             RESTARTS</div>
+            <div class="ttm-line ttm-out" id="s3-row">checkout-7d9f-2xkqp  0/1     <span class="ttm-err">CrashLoopBackOff</span>   6</div>
+            <div class="ttm-line ttm-out" id="s3-row2">checkout-7d9f-9wzlt  0/1     <span class="ttm-err">CrashLoopBackOff</span>   6</div>
+            <div class="ttm-line"></div>
+            <div class="ttm-line ttm-out2"><span class="ttm-prompt">$ </span><span id="s3-cmd2"></span></div>
+            <div class="ttm-line ttm-out3" id="s3-reason">    Last State:  Terminated   Reason: <span class="ttm-err" style="font-weight:700">OOMKilled</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const D = 7;
+      const tl = gsap.timeline({ paused: true });
+      TTM.drift(tl, "#s3-grid", 0, D);
+      let t = TTM.enter(tl, "#s3-stage", 0, "zoom");
+      TTM.reveal(tl, "#s3-kick", 0.15, { kind: "rise" });
+      TTM.words(tl, "#s3-title", 0.25, { stagger: 0.08 });
+      TTM.reveal(tl, "#s3-term", 0.4, { kind: "card" });
+      t = TTM.type(tl, "#s3-cmd", "kubectl get pods", 1.0, { cps: 24, blinkUntil: 1.8 });
+      t = TTM.stream(tl, "#s3-term .ttm-out", t + 0.2);
+      TTM.glitch(tl, "#s3-row", t + 0.1);
+      TTM.reveal(tl, "#s3-term .ttm-out2", t + 0.5, { kind: "line" });
+      t = TTM.type(tl, "#s3-cmd2", "kubectl describe pod checkout-7d9f-2xkqp", t + 0.6, { cps: 30, blinkUntil: t + 2.2 });
+      TTM.reveal(tl, "#s3-reason", t + 0.25, { kind: "line" });
+      TTM.fail(tl, "#s3-reason", t + 0.3, {});
+      TTM.exit(tl, "#s3-stage", D, "whip");
+      window.__timelines["s3"] = tl;
+    })();
+  </script>
+</template>

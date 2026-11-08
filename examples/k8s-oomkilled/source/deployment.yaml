@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: checkout }
+  template:
+    metadata:
+      labels: { app: checkout }
+    spec:
+      containers:
+        - name: checkout
+          image: registry.example.com/checkout:v2.4.1
+          ports: [{ containerPort: 8080 }]
+          resources:
+            requests: { cpu: 250m, memory: 256Mi }
+            limits: { memory: 256Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkout
+spec:
+  selector: { app: checkout }
+  ports: [{ port: 80, targetPort: 8080 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: checkout
+  annotations: { kubernetes.io/ingress.class: nginx }
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /checkout
+            pathType: Prefix
+            backend: { service: { name: checkout, port: { number: 80 } } }

@@ -1,0 +1,10 @@
+{
+  "name": "tech-to-motion",
+  "version": "1.0.0",
+  "description": "Turn your real tech (repo, docker-compose, Terraform, k8s, CI, postmortem) into a motion-design explainer video with animated diagrams and synced sound.",
+  "author": { "name": "Georges MOMO", "url": "https://github.com/georgesmomo" },
+  "homepage": "https://github.com/georgesmomo/tech-to-motion",
+  "repository": "https://github.com/georgesmomo/tech-to-motion",
+  "license": "MIT",
+  "keywords": ["motion-design", "motion-graphics", "explainer-video", "animated-diagram", "architecture-diagram", "hyperframes", "gsap", "devops", "agent-skills"]
+}

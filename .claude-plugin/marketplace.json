@@ -1,0 +1,8 @@
+{
+  "name": "tech-to-motion",
+  "description": "Turn your real tech (repo, docker-compose, Terraform, k8s, CI, postmortem) into a motion-design explainer video with animated diagrams and synced sound.",
+  "owner": { "name": "Georges MOMO", "url": "https://github.com/georgesmomo" },
+  "plugins": [
+    { "name": "tech-to-motion", "source": "./", "description": "Turn your real tech (repo, docker-compose, Terraform, k8s, CI, postmortem) into a motion-design explainer video with animated diagrams and synced sound." }
+  ]
+}

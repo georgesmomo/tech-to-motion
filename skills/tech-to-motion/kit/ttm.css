@@ -1,0 +1,158 @@
+/* tech-to-motion kit: looks and building blocks.
+   ttm inlines this file into index.html (the HyperFrames compiler only embeds fonts it can see
+   in the HTML). Body attributes: data-look="blueprint|terminal|neon|paper", data-ratio="16x9|9x16|1x1|4x5". */
+
+/* Font families used by the looks, named literally so the compiler embeds all of them. */
+.ttm-fonts-a { font-family: "Inter"; } .ttm-fonts-b { font-family: "IBM Plex Mono"; }
+.ttm-fonts-c { font-family: "JetBrains Mono"; } .ttm-fonts-d { font-family: "Outfit"; }
+.ttm-fonts-e { font-family: "Space Mono"; } .ttm-fonts-f { font-family: "Playfair Display"; }
+
+/* Type scale per ratio (px at render size). The kit reads --fs-label / --fs-sub to size boxes. */
+:root {
+  --safe-l: 96px; --safe-r: 96px; --safe-t: 54px; --safe-b: 120px;
+  --fs-hook: 132px; --fs-title: 76px; --fs-body: 40px; --fs-label: 34px; --fs-sub: 28px;
+  --fs-small: 28px; --fs-kicker: 30px; --fs-code: 32px; --fs-stat: 180px; --fs-url: 44px;
+}
+[data-ratio="9x16"] {
+  --safe-l: 90px; --safe-r: 190px; --safe-t: 260px; --safe-b: 670px;
+  --fs-hook: 116px; --fs-title: 84px; --fs-body: 46px; --fs-label: 44px; --fs-sub: 34px;
+  --fs-small: 32px; --fs-kicker: 34px; --fs-code: 36px; --fs-stat: 200px; --fs-url: 46px;
+}
+[data-ratio="1x1"] { --safe-l: 60px; --safe-r: 60px; --safe-t: 60px; --safe-b: 60px; }
+[data-ratio="4x5"] { --safe-l: 60px; --safe-r: 60px; --safe-t: 80px; --safe-b: 160px; }
+[data-ratio="1x1"], [data-ratio="4x5"] {
+  --fs-hook: 100px; --fs-title: 70px; --fs-body: 42px; --fs-label: 40px; --fs-sub: 32px;
+  --fs-small: 30px; --fs-kicker: 32px; --fs-code: 34px; --fs-stat: 170px; --fs-url: 42px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root, [data-look="blueprint"] {
+  --bg: #0B1B2E; --panel: #112640; --line: #1E3A5F; --text: #E6EDF7; --muted: #8BA3C0;
+  --accent: #4FC3F7; --accent-2: #FFB547; --ok: #3DDC97; --err: #FF5C6C; --packet: #4FC3F7;
+  --font-display: "Inter", sans-serif; --font-body: "Inter", sans-serif; --font-mono: "IBM Plex Mono", monospace;
+  --display-weight: 900; --display-tracking: -0.03em; --radius: 14px; --glow: 0 0 0 transparent;
+  --grid: 40px; --grid-alpha: 0.45;
+}
+[data-look="terminal"] {
+  --bg: #0D1117; --panel: #161B22; --line: #21262D; --text: #C9D1D9; --muted: #8B949E;
+  --accent: #58A6FF; --accent-2: #D29922; --ok: #3FB950; --err: #F85149; --packet: #58A6FF;
+  --node-idle: #3A4350;
+  --font-display: "JetBrains Mono", monospace; --font-body: "JetBrains Mono", monospace; --font-mono: "JetBrains Mono", monospace;
+  --display-weight: 800; --display-tracking: -0.02em; --radius: 8px; --grid: 0px;
+}
+[data-look="neon"] {
+  --bg: #0A0A14; --panel: #14142B; --line: #24244A; --text: #F2F2FF; --muted: #9A9AC8;
+  --accent: #00E5FF; --accent-2: #FF2BD6; --ok: #39FF88; --err: #FF3B5C; --packet: #00E5FF;
+  --font-display: "Outfit", sans-serif; --font-body: "Inter", sans-serif; --font-mono: "Space Mono", monospace;
+  --display-weight: 800; --display-tracking: -0.02em; --radius: 18px;
+  --glow: 0 0 18px color-mix(in srgb, var(--accent) 55%, transparent); --grid: 64px; --grid-alpha: 0.35;
+}
+[data-look="paper"] {
+  --bg: #F5F1E8; --panel: #FFFFFF; --line: #D9D2C3; --text: #1F1B16; --muted: #6B6358;
+  --accent: #2B59C3; --accent-2: #E07A1F; --ok: #2E8B57; --err: #C8372D; --packet: #2B59C3;
+  --font-display: "Playfair Display", serif; --font-body: "Inter", sans-serif; --font-mono: "IBM Plex Mono", monospace;
+  --display-weight: 700; --display-tracking: -0.01em; --radius: 10px; --grid: 32px; --grid-alpha: 0.6;
+}
+
+html, body { overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--font-body); }
+
+/* Every scene root is full-frame; .ttm-stage is the transformable layer inside it. */
+.ttm-scene { position: absolute; inset: 0; background: var(--bg); overflow: hidden; }
+.ttm-stage { position: absolute; inset: 0; transform-origin: 50% 50%; }
+.ttm-camera { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform-origin: 0 0; }
+
+/* Blueprint grid. Oversized so the ambient drift never shows an edge. */
+.ttm-grid {
+  position: absolute; left: -120px; top: -120px; right: -120px; bottom: -120px; opacity: var(--grid-alpha);
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: var(--grid) var(--grid);
+}
+/* Terminal look: scanlines instead of a grid, so the ambient drift still moves something. */
+[data-look="terminal"] .ttm-grid { opacity: 0.5; background-size: 100% 6px;
+  background-image: linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); }
+.ttm-scene::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 50;
+  background: radial-gradient(ellipse at 50% 45%, transparent 55%, color-mix(in srgb, var(--bg) 80%, black) 100%); }
+[data-look="paper"] .ttm-scene::after { display: none; }
+
+/* Type */
+.ttm-hook, .ttm-title { font-family: var(--font-display); font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking); line-height: 1.05; color: var(--text); }
+.ttm-hook { font-size: var(--fs-hook); }
+.ttm-title { font-size: var(--fs-title); }
+.ttm-kicker { font-family: var(--font-mono); font-size: var(--fs-kicker); font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent); }
+.ttm-body { font-size: var(--fs-body); font-weight: 400; line-height: 1.3; color: var(--text); }
+.ttm-muted { color: var(--muted); }
+.ttm-accent { color: var(--accent); }
+.ttm-accent-2 { color: var(--accent-2); }
+.ttm-ok { color: var(--ok); }
+.ttm-err { color: var(--err); }
+.ttm-word { display: inline-block; white-space: pre; }
+.ttm-mark { display: inline-block; padding: 0 0.18em; border-radius: 0.12em;
+  background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--text); }
+/* Centred inside the platform safe area (on 9:16 the safe box is off-centre: 90 px left, 190 px right). */
+.ttm-center { position: absolute; left: var(--safe-l); right: var(--safe-r); text-align: center; }
+.ttm-safe { position: absolute; left: var(--safe-l); right: var(--safe-r); }
+/* Debug overlay drawn by `ttm stills` (never in renders). */
+body[data-safe-overlay] .ttm-scene::before { content: ""; position: absolute; z-index: 9999; pointer-events: none;
+  left: var(--safe-l); right: var(--safe-r); top: var(--safe-t); bottom: var(--safe-b);
+  border: 3px dashed rgba(255, 43, 214, 0.85); }
+.ttm-swap { display: inline-grid; } .ttm-swap > * { grid-area: 1 / 1; display: inline-block; }
+
+/* Diagram nodes (built by TTM.diagram) */
+.ttm-node {
+  --state: var(--node-idle, var(--accent));
+  position: absolute; display: flex; align-items: center; gap: 18px; padding: 0 26px;
+  background: var(--panel); border: 3px solid var(--state); border-radius: var(--radius);
+  box-shadow: var(--glow), 0 18px 40px rgba(0,0,0,0.28); color: var(--text);
+}
+[data-look="paper"] .ttm-node { box-shadow: 0 6px 0 var(--line); }
+.ttm-node .ttm-icon { flex: 0 0 auto; width: 52px; height: 52px; }
+.ttm-node .ttm-icon svg { width: 100%; height: 100%; display: block; }
+.ttm-node .ttm-label { font-size: var(--fs-label); font-weight: 700; line-height: 1.1; white-space: nowrap; }
+.ttm-node .ttm-sub { font-family: var(--font-mono); font-size: var(--fs-sub); color: var(--muted); margin-top: 4px; white-space: nowrap; }
+.ttm-node.ttm-ghost { border-style: dashed; }
+.ttm-edges { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+.ttm-edge { fill: none; stroke: var(--muted); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.ttm-edge-label { font-family: var(--font-mono); font-size: var(--fs-small); fill: var(--muted); }
+.ttm-head { fill: var(--muted); }
+.ttm-packet { fill: var(--packet); }
+
+/* Terminal */
+.ttm-term { position: absolute; background: #0B0F14; border: 2px solid #232B36; border-radius: 16px;
+  overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.45); }
+[data-look="paper"] .ttm-term { border-color: var(--line); }
+.ttm-term-bar { height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 22px; background: #151B23; }
+.ttm-term-bar i { width: 16px; height: 16px; border-radius: 50%; background: #3A4350; display: inline-block; }
+.ttm-term-bar i:nth-child(1) { background: #FF5F57; } .ttm-term-bar i:nth-child(2) { background: #FEBC2E; } .ttm-term-bar i:nth-child(3) { background: #28C840; }
+.ttm-term-bar span { margin-left: 14px; font-family: var(--font-mono); font-size: var(--fs-small); color: #8B949E; }
+.ttm-term-body { padding: 26px 30px; font-family: var(--font-mono); font-size: var(--fs-code); line-height: 1.45; color: #C9D1D9; }
+.ttm-line { white-space: pre; min-height: 1.45em; }
+.ttm-prompt { color: #3FB950; }
+.ttm-caret { display: inline-block; width: 0.55em; height: 1.05em; vertical-align: -0.15em; background: currentColor; margin-left: 2px; }
+
+/* Code */
+.ttm-code { position: absolute; background: var(--panel); border: 2px solid var(--line); border-radius: 16px;
+  padding: 28px 34px; font-family: var(--font-mono); font-size: var(--fs-code); line-height: 1.5; color: var(--text); white-space: pre; }
+.ttm-code .k { color: #C792EA; } .ttm-code .s { color: #C3E88D; } .ttm-code .n { color: #F78C6C; }
+.ttm-code .c { color: var(--muted); font-style: italic; } .ttm-code .f { color: #82AAFF; } .ttm-code .t { color: #FFCB6B; }
+[data-look="paper"] .ttm-code .k { color: #7B30D0; } [data-look="paper"] .ttm-code .s { color: #2E7D32; }
+[data-look="paper"] .ttm-code .n { color: #C2410C; } [data-look="paper"] .ttm-code .f { color: #1D4ED8; } [data-look="paper"] .ttm-code .t { color: #A16207; }
+.ttm-hl { display: block; margin: 0 -34px; padding: 0 34px; }
+
+/* Cards, badges, stats */
+.ttm-card { position: absolute; background: var(--panel); border: 2px solid var(--line); border-radius: var(--radius);
+  padding: 34px 40px; box-shadow: var(--glow), 0 18px 40px rgba(0,0,0,0.25); }
+.ttm-badge { display: inline-flex; align-items: center; gap: 12px; padding: 10px 22px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: var(--fs-small); font-weight: 700; border: 2px solid currentColor; }
+.ttm-stat { font-family: var(--font-display); font-weight: var(--display-weight); font-size: var(--fs-stat);
+  letter-spacing: var(--display-tracking); line-height: 1; font-variant-numeric: tabular-nums; }
+
+/* End card */
+.ttm-end-url { font-family: var(--font-mono); font-size: var(--fs-url); color: var(--accent); }
+
+/* Full-frame flash for TTM.flash (add <div class="ttm-flash" id="sN-flash"> last in the scene) */
+.ttm-flash { position: absolute; inset: 0; background: var(--text); opacity: 0; pointer-events: none; }

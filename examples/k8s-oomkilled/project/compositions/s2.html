@@ -1,0 +1,48 @@
+<template>
+  <div id="root" data-composition-id="s2" data-width="1920" data-height="1080">
+    <div class="ttm-scene">
+      <div class="ttm-grid" id="s2-grid"></div>
+      <div class="ttm-stage" id="s2-stage">
+        <div class="ttm-camera" id="s2-cam">
+          <div class="ttm-kicker" id="s2-kick" style="position:absolute; left:140px; top:150px">The happy path</div>
+          <h2 class="ttm-title" id="s2-title" style="position:absolute; left:140px; top:200px">GET /checkout</h2>
+          <div id="s2-map" style="position:absolute; inset:0"></div>
+          <div class="ttm-badge ttm-ok" id="s2-ms" style="position:absolute; left:120px; top:680px">200 OK · 84 ms</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const D = 8;
+      const I = TTM_ICONS;
+      const tl = gsap.timeline({ paused: true });
+      TTM.drift(tl, "#s2-grid", 0, D);
+      let t = TTM.enter(tl, "#s2-stage", 0, "whip");
+      const d = TTM.diagram("#s2-map", {
+        nodes: [
+          { id: "user", label: "Browser", sub: "user", icon: I.googlechrome, x: 250, y: 560, w: 300 },
+          { id: "ing", label: "Ingress", sub: "nginx", icon: I.nginx, x: 700, y: 560, w: 300 },
+          { id: "svc", label: "Service", sub: "checkout:80", icon: I.kubernetes, x: 1150, y: 560, w: 320 },
+          { id: "pod", label: "Pod", sub: "checkout-7d9f", icon: I.kubernetes, x: 1610, y: 560, w: 320 },
+          { id: "db", label: "PostgreSQL", sub: "orders", icon: I.postgresql, x: 1610, y: 860, w: 340 }
+        ],
+        edges: [
+          { from: "user", to: "ing", label: "HTTPS" },
+          { from: "ing", to: "svc" },
+          { from: "svc", to: "pod" },
+          { from: "pod", to: "db", label: "SQL" }
+        ]
+      }, { prefix: "s2" });
+      TTM.reveal(tl, "#s2-kick", t - 0.1, { kind: "rise" });
+      TTM.words(tl, "#s2-title", t, { stagger: 0.08 });
+      t = d.build(tl, t + 0.3, { step: 0.38 });
+      t = d.flow(tl, ["user", "ing", "svc", "pod", "db"], t + 0.25, {});
+      t = d.flow(tl, ["db", "pod", "svc", "ing", "user"], t + 0.1, { color: "#3DDC97" });
+      TTM.ok(tl, d.node("user"), t);
+      TTM.reveal(tl, "#s2-ms", t + 0.1, { kind: "pop" });
+      TTM.dive(tl, "#s2-cam", d.node("pod"), D);
+      window.__timelines["s2"] = tl;
+    })();
+  </script>
+</template>
