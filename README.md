@@ -183,6 +183,7 @@ of their owners.
 
 ## Related
 
+- [**idea-to-motion**](https://github.com/georgesmomo/idea-to-motion): the same studio pipeline for any topic: launches, birthdays, data stories, quotes, Reels.
 - [**devops-mock-interview**](https://github.com/georgesmomo/devops-mock-interview): a realistic DevOps / SRE interview with live incidents.
 - [**mock-interview**](https://github.com/georgesmomo/mock-interview): the same realistic interview for any job.
 - [**spectoflow**](https://github.com/georgesmomo/spectoflow): spec-driven development for any coding agent.
